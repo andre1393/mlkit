@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import math
 
-def kmeans(df, k = 2, max_iter = 5):
+def kmeans(df, k = 2, max_iter = 50, delta_iter = 0):
     df['cluster'] = 1
     ridx = np.random.choice(range(1,len(df)), k)
     cluster = df.loc[ridx,].reset_index()
@@ -16,9 +16,21 @@ def kmeans(df, k = 2, max_iter = 5):
                 if(c_dist < min_dist):
                     min_dist = c_dist
                     df.loc[i_row, 'cluster'] = i_cluster
+        
+        delta_cluster = np.array([])
         for i_cluster, c in cluster.iterrows():
+            delta_var = np.array([])
             for var in list(filter(lambda x: x != 'index', list(cluster))):
+                old = cluster.loc[i_cluster, var]
                 cluster.loc[i_cluster, var] = df[df['cluster'] == i_cluster][var].mean()
+                delta_var = np.append(delta_var, cluster.loc[i_cluster, var] - old)
+            delta_cluster = np.append(delta_cluster, delta_var)
+        
+        if sum(delta_cluster) <= delta_iter:
+            print('treinamento convergiu')
+            break
+            
+    print('kmeans treinado em {} iteracoes'.format(i + 1))
 
     return df, cluster
 
