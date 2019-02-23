@@ -1,13 +1,6 @@
 import numpy as np
 import pandas as pd
 
-def evaluate(population):
-    ev = []
-    for i in population:
-        ev.append(sum(i))
-    
-    return ev
-
 class GA:
     
     def __init__(self, max_gen = 100, n_individuals = 10, n_chrom = 4, replace = False, p_crossover = 0.5, p_mutation = 0.005):
@@ -17,6 +10,7 @@ class GA:
         self.replace = replace
         self.p_crossover = p_crossover
         self.p_mutation = p_mutation
+        self.bests = []
 
     # todo: transformar tudo em np.array
     def initialize(self):
@@ -28,9 +22,11 @@ class GA:
         print('populacao inicial: ', self.population)
     def crossover(self):
         new_generation = []
-        half = self.n_chrom/2
+        half = int(self.n_chrom/2)
         for i in range(0, len(self.population), 2):
-            if np.random.uniform() < self.p_crossover: # crossover 
+            if np.random.uniform() < self.p_crossover: # crossover
+                self.population[i][0:half]
+                self.population[i + 1][half:]
                 n1 = np.concatenate((self.population[i][0:half], self.population[i + 1][half:]), axis = 0)
                 n2 = np.concatenate((self.population[i][half:], self.population[i + 1][0:half]), axis = 0)
                 new_generation.append(n1)
@@ -53,38 +49,35 @@ class GA:
                 
         self.population = mutated_population
 
-    def select(self, ev, elitism = True):
-        self.population = self.gen_choice(self.population, p = ev/sum(ev), size = len(self.population), elitism = elitism)
-    
-    def gen_choice(self, population, p, size, elitism):
+    def select(self, ev, elitism = True, best = None):
+        self.population, best = self.gen_choice(self.population, p = ev/sum(ev), size = len(self.population), elitism = elitism, best_i = best)
+        return best
+    def gen_choice(self, population, p, size, elitism, best_i):
 
         best = -np.inf
-        best_i = None
         idx = np.random.choice(range(len(population)), p = p, size = size)
         selected_population = []
         for i in idx:
             if p[i] >= best:
+                best = p[i]
                 best_i = self.population[i]
             selected_population.append(self.population[i])
         
         selected_population[0] = best_i
         
-        print(sum(best_i))
-        return selected_population
+        self.bests.append(sum(best_i))
+        return selected_population, best_i
         
     def fit(self, evaluate, gene):
         self.evaluate = evaluate
         self.gene = gene
         
         self.initialize()
-
+        best = None
         for i in range(self.max_gen):
             self.crossover()
             self.mutate()
             ev = evaluate(self.population)
-            self.select(ev)
+            best = self.select(ev, best = best)
 
         return self.population 
-
-model = GA(max_gen = 1000, replace = True)
-model.fit(evaluate, [0, 1, 2, 3, 4, 5])
