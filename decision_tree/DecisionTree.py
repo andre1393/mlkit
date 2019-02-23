@@ -25,10 +25,10 @@ class DecisionTree:
 						max_gain = (column, gain_value)
 		
 		if df.columns.size <= 1:
-			counts = df.iloc[:,0].value_counts()
+			counts = df.loc[:,classe].value_counts()
 			return Node('value', [counts.keys()[0]], df.columns[0])
 		elif max_gain[1] <= 0:
-			counts = df.iloc[:,0].value_counts()
+			counts = df.loc[:,classe].value_counts()
 			return Node('value', [counts.keys()[0]], df.columns[0])
 		
 		node = Node(link, None, max_gain[0])

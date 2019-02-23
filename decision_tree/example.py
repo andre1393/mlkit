@@ -12,4 +12,4 @@ model.fit(df, 'Decision')
 df.drop('Decision', 1, inplace = True)
 
 for idx, row in df.iterrows():
-	print(model.predict(row))
+	print('row: \n%s | decision: %s\n---------------' % (row, model.predict(row)))
