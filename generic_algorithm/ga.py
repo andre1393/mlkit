@@ -49,17 +49,14 @@ class GA:
                 
         self.population = mutated_population
 
-    def select(self, ev, elitism = True, best = None):
+    def select(self, ev, elitism = True, best = []):
         self.population, best = self.gen_choice(self.population, p = ev/sum(ev), size = len(self.population), elitism = elitism, best_i = best)
         return best
     def gen_choice(self, population, p, size, elitism, best_i):
-
-        best = -np.inf
         idx = np.random.choice(range(len(population)), p = p, size = size)
         selected_population = []
         for i in idx:
-            if p[i] >= best:
-                best = p[i]
+            if self.evaluate([self.population[i]]) >= self.evaluate([best_i]):
                 best_i = self.population[i]
             selected_population.append(self.population[i])
         
@@ -73,7 +70,7 @@ class GA:
         self.gene = gene
         
         self.initialize()
-        best = None
+        best = []
         for i in range(self.max_gen):
             self.crossover()
             self.mutate()
