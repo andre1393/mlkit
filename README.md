@@ -1,2 +1,2 @@
 # algoritmos-python
-implementacao de algoritmos de machine learning/ inteligencia artificial em python
+In this project I develop some machine learning algorithms using python
