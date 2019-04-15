@@ -62,13 +62,12 @@ class GA:
         
         selected_population[0] = best_i
         
-        self.bests.append(sum(best_i))
+        self.bests.append(best_i)
         return selected_population, best_i
         
     def fit(self, evaluate, gene):
         self.evaluate = evaluate
         self.gene = gene
-        
         self.initialize()
         best = []
         for i in range(self.max_gen):

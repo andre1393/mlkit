@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from Node import Node
+from classification.decision_tree.Node import Node
 
 class DecisionTree:
 

@@ -105,7 +105,7 @@ class KMeans:
                     ax.set_ylabel('{}'.format(cols[j]))
                     ax.grid(grid)
                     ax.axis(axis)
-                    fig.show()
+        plt.show()
     
     @property
     def mean_dist(self):
@@ -114,14 +114,7 @@ class KMeans:
             result += self.calc_dist(item, self.cluster_centers.iloc[self.labels[i],:])
         return result
 
-    def random_dataset(self, ncols = 2, n_sample = 99, k = 3):
-        df = pd.DataFrame()
-        for i in range(ncols):
-            df[str(i)] = np.random.normal(i + 1, 0.2, n_sample) * np.repeat([5, 10, 15], int(n_sample)/k)
-        
-        return df
-
-def evaluate_k(df, ks = range(1,10), plot = True):
+def elbow_method(df, ks = range(1,10), plot = True):
     process_init = time.time()
     ev = []
     for k in ks:
@@ -133,5 +126,6 @@ def evaluate_k(df, ks = range(1,10), plot = True):
     
     if plot:
         plt.plot(ks, ev)
+        plt.show()
         
-    return ev, ks
+    return ks, ev
