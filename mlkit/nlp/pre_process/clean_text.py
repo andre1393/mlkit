@@ -5,14 +5,15 @@ from nltk.stem import PorterStemmer
 import pandas as pd
 from nltk.stem.rslp import RSLPStemmer
 import re
+nltk.download('rslp', quiet = True)
+nltk.download('stopwords', quiet = True)
 
 STEM = "Stemizacao"
 LEM = "Lemmatizacao"
     
 class TextCleaner:
     
-    def __init__(self, lan = 'english', norm = None, load_v = None, clean_regex = "([aA-zZ]+)", stemmer = RSLPStemmer()):
-        nltk.download('stopwords', quiet = True)
+    def __init__(self, lan = 'english', norm = None, load_v = None, clean_regex = "([aA-zZ]+)", stemmer = RSLPStemmer(), custom_func = []):
         self.regex = clean_regex
         self.stops = nltk.corpus.stopwords.words(lan)
         
@@ -30,13 +31,33 @@ class TextCleaner:
         if (norm != STEM) and (norm != LEM) and (norm != None):
             raise("Normalizacao invalida")
         self.norm = norm
+        self.custom_func = custom_func
         
-    def clean(self, df, stops = None):
+    def clean(self, text_input, stops = None):
         if stops != None:
             self.stops = stops
-            
-        return df.apply(self.remove_special_char).apply(lambda x: self.remove_stop_words(x, self.stops)).apply(self.normalize)
         
+        if type(text_input) == pd.Series:
+            result = text_input.apply(self.remove_special_char).apply(lambda x: self.remove_stop_words(x, self.stops)).apply(self.normalize)
+            for f in self.custom_func:
+                result = result.apply(f)
+            return result
+        elif type(text_input) == str:
+            return self.clean_one(text_input)
+        elif type(text_input) == list:
+            result = []
+            for text in text_input:
+                result.append(self.clean_one(text))
+            return result
+        else:
+            raise('Tipo de input de texto nao reconhecido')
+
+    def clean_one(self, text):
+        result = self.normalize(self.remove_stop_words(self.remove_special_char(text), self.stops))
+        for f in self.custom_func:
+            result = f(result)
+        return result
+
     def remove_special_char(self, text):
         return " ".join(["".join(re.findall(self.regex, word)).lower() for word in text.split(" ")])
     
