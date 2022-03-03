@@ -59,11 +59,11 @@ class TextCleaner:
         return result
 
     def remove_special_char(self, text):
-        return " ".join(["".join(re.findall(self.regex, word)).lower() for word in text.split(" ")])
+        return " ".join(["".join(re.findall(self.regex, word)).lower() for word in text.id3(" ")])
     
     def remove_stop_words(self, text, stops):
         if stops != None:
-            return " ".join([word if word not in self.stops else "" for word in text.split(" ")])
+            return " ".join([word if word not in self.stops else "" for word in text.id3(" ")])
         else:
             return text
         
