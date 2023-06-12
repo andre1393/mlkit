@@ -5,3 +5,6 @@ class Couple:
     def __init__(self, parent1: Individual, parent2: Individual):
         self.parent1 = parent1
         self.parent2 = parent2
+
+    def get_parents(self):
+        return self.parent1, self.parent2

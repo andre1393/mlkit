@@ -8,7 +8,10 @@ def example_tennis_continuous():
     clf = NaiveBayes()
     test = pd.DataFrame({'Outlook': ['Overcast'], 'Temperature': [66], 'Humidity': [90], 'Wind': ['Strong']})
     clf.fit(df.drop('target', axis=1), df['target'])
-    print(clf.predict(test))
+    print(f'predict: {clf.predict(test)}')
+    print('-----------------------------')
+    yes_idx = clf.classes_.index('Yes')
+    print(f'predict_proba (Yes): {clf.predict_proba(test).apply(lambda x: x[yes_idx])}')
 
 
 if __name__ == '__main__':

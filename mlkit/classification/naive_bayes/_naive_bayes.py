@@ -1,7 +1,7 @@
 """ Naive Bayes Classifier simple implementation
 
 This implementation is not meant to be faster, more robust or even better than any other available library like
-Scikit-Learn but is meant to be as simple as possible to help understand the concepts instead
+Scikit-Learn but is meant to be as simple as possible to help understand the concepts instead.
 
 https://www.ic.unicamp.br/~rocha/teaching/2011s2/mc906/aulas/naive-bayes-classifier.pdf
 https://www.atoti.io/how-to-solve-the-zero-frequency-problem-in-naive-bayes/
@@ -26,10 +26,11 @@ class NaiveBayes(BaseClassifier):
 
     def __init__(self, continuous_variables=None):
         super().__init__()
-        self._continuous_variables = continuous_variables if continuous_variables else {}
+        self._continuous_variables = continuous_variables or {}
         self.p_x_given_y = {}
         self.classes_probability = None
         self.classes_count = None
+        self.classes_ = None
 
     def fit(self, x: DataFrame, y: Series) -> None:
         """Given a X and y, fit a Naive Bayes classifier
@@ -67,7 +68,7 @@ class NaiveBayes(BaseClassifier):
         for p_class in self.classes_probability.index:
             x_given_y = x[y == p_class]
             self.p_x_given_y[p_class] = {
-                i: self._calculate_feature_prior(c, len(x[i].unique())) for i, c in x_given_y.iteritems()
+                i: self._calculate_feature_prior(c, len(x[i].unique())) for i, c in x_given_y.items()
             }
 
     def _calculate_feature_prior(self, column: Series, unique_values: int) -> PriorKnowledge:
