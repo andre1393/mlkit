@@ -38,10 +38,15 @@ def evaluate_salesman_travel():
 
 
 def main():
-    model = GA(max_gen=4000, chr_type='permutation', n_chr=9, replace=True, population_size=50)
+    model = GA(max_gen=2000, chr_type='permutation', n_chr=9, population_size=50)
     best_solution, fitness_score = model.run(evaluate_salesman_travel())
-    plt.plot(range(0, len(model.best_fitness_score)), model.best_fitness_score)
+    plt.plot(range(0, len(model.best_fitness_score)), [v * -1 for v in model.best_fitness_score])
+    plt.grid()
+    plt.xlabel('generation')
+    plt.ylabel('min distance')
+    plt.title('Generation vs Min Distance')
     plt.show()
+
     print(f'solution: {best_solution} | fitness_score: {fitness_score}')
 
 

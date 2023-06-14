@@ -74,6 +74,68 @@ References:
 * https://iq.opengenus.org/id3-algorithm/
 * https://www.kdnuggets.com/2020/01/decision-tree-algorithm-explained.html
 
+### Clustering
+
+### K-Means
+K-Means algorithm implementation using the euclidian distance method to measure distance.
+
+![k-means training iterations](doc/images/training_iterations.gif)
+
+Class constructor parameters:
+
+| param | type | description | required | default value |
+| - | - | - | - | - |
+| k | int | number of clusters | true | |
+| max_iter | int | max number of iterations | false | 50 |
+| min_delta_iter | float | min difference between iteration to consider the training converged. This difference is calculated by computing the sum of distances of the cluster from one iteration for another | false | 0.01 |
+| seed | int | seed value to apply for randomly commands | false | None |
+| colors | list | list of colors to apply for each cluster. If not provided, then it will be randomly assigned | false | random |
+| step_by_step | bool | Rather the training should be run step by step, plotting the intermediate cluster results | false | false |
+
+##### How to use it
+```python
+import pandas as pd
+from mlkit.clustering.kmeans import KMeans
+
+df = pd.read_csv('awesome_dataset.csv')
+model = KMeans(3, max_iter=1000)
+labels = model.fit_predict(df)
+model.plot()
+```
+The plot would look like this:
+![plot result](doc/images/data_clustered.png)
+Or if the dataset has 3 features:
+![3d plot](doc/images/3d_plot.png)
+It is also possible to run the elbow method:
+```python
+import time
+import pandas as pd
+import matplotlib.pyplot as plt
+from mlkit.clustering.kmeans import KMeans
+
+process_init = time.time()
+inertia_values = []
+df = pd.read_csv('awesome_dataset.csv')
+ks = range(1, 10)
+for k in ks:
+    model = KMeans(k)
+    model.fit(df)
+    inertia_values.append(model.inertia_)
+
+plt.plot(ks, inertia_values)
+plt.xlabel('k')
+plt.ylabel('inertia')
+plt.title('Elbow graph')
+plt.grid()
+plt.show()
+```
+The result would look like the following:
+![elbow method](doc/images/elbow_method.png)
+
+A full example can be found in
+* [K-Means random dataset example](examples/clustering/kmeans_random_dataset_example.py)
+* [K-Means Country Data](examples/clustering/kmeans_country_data_example.py)
+
 ### Optimization
 
 #### Generic Algorithm
@@ -121,6 +183,19 @@ model = GA(max_gen=4000, chr_type='permutation', n_chr=9, replace=True, populati
 best_solution, fitness_score = model.run(evaluate_salesman_travel())
 print(f'solution: {best_solution} | fitness_score: {fitness_score}')
 ```
+It is also possible to plot the result over the generations.
+````python
+model = GA(max_gen=2000, chr_type='permutation', n_chr=9, population_size=50)
+best_solution, fitness_score = model.run(evaluate_salesman_travel())
+plt.plot(range(0, len(model.best_fitness_score)), [v * -1 for v in model.best_fitness_score])
+plt.grid()
+plt.xlabel('generation')
+plt.ylabel('min distance')
+plt.title('Generation vs Min Distance')
+plt.show()
+````
+For the example use case the result would be like the following:
+![ga_results](doc/images/ga_results.png)
 
 A full example can be found in:
 * [Genetic Algorithm example](examples/optimization/generic_algorithm_example.py)
